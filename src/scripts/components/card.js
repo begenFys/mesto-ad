@@ -1,42 +1,43 @@
 export const likeCard = (likeButton) => {
-  likeButton.classList.toggle("card__like-button_is-active");
-};
-
-export const deleteCard = (cardElement) => {
-  cardElement.remove();
+    likeButton.classList.toggle("card__like-button_is-active");
 };
 
 const getTemplate = () => {
-  return document
-    .getElementById("card-template")
-    .content.querySelector(".card")
-    .cloneNode(true);
+    return document
+        .getElementById("card-template")
+        .content.querySelector(".card")
+        .cloneNode(true);
 };
 
-export const createCardElement = (
-  data,
-  { onPreviewPicture, onLikeIcon, onDeleteCard }
-) => {
-  const cardElement = getTemplate();
-  const likeButton = cardElement.querySelector(".card__like-button");
-  const deleteButton = cardElement.querySelector(".card__control-button_type_delete");
-  const cardImage = cardElement.querySelector(".card__image");
+export const createCardElement = (data, {onPreviewPicture, onLikeIcon, onDeleteCard, userId}) => {
+    const cardElement = getTemplate();
+    const likeButton = cardElement.querySelector(".card__like-button");
+    const deleteButton = cardElement.querySelector(".card__control-button_type_delete");
+    const cardImage = cardElement.querySelector(".card__image");
 
-  cardImage.src = data.link;
-  cardImage.alt = data.name;
-  cardElement.querySelector(".card__title").textContent = data.name;
+    cardImage.src = data.link;
+    cardImage.alt = data.name;
+    cardElement.querySelector(".card__title").textContent = data.name;
 
-  if (onLikeIcon) {
-    likeButton.addEventListener("click", () => onLikeIcon(likeButton));
-  }
+    if (data.owner._id !== userId) {
+        deleteButton.remove();
+    }
 
-  if (onDeleteCard) {
-    deleteButton.addEventListener("click", () => onDeleteCard(cardElement));
-  }
+    if (onLikeIcon) {
+        likeButton.addEventListener("click", () => onLikeIcon(likeButton));
+    }
 
-  if (onPreviewPicture) {
-    cardImage.addEventListener("click", () => onPreviewPicture({name: data.name, link: data.link}));
-  }
+    if (onDeleteCard && deleteButton) {
+        deleteButton.addEventListener("click", () => {
+            onDeleteCard(data._id, cardElement);
+        });
+    }
 
-  return cardElement;
+    if (onPreviewPicture) {
+        cardImage.addEventListener("click", () =>
+            onPreviewPicture({name: data.name, link: data.link})
+        );
+    }
+
+    return cardElement;
 };
