@@ -23,6 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Create .env file from Secrets
+        run: |
+          cat > .env << EOF
+          VITE_GROUP_ID=${{ secrets.VITE_GROUP_ID }}
+          VITE_API_TOKEN=${{ secrets.VITE_API_TOKEN }}
+          EOF
+
       - name: Build project
         run: npm run build
 
